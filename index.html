@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="si">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<title>2027 A/L • Study Planner</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:#f4f6fa;color:#101828;
+  font-family:"Noto Sans Sinhala","Nirmala UI","Iskoola Pota",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+.app{max-width:720px;margin:auto;min-height:100vh;padding-bottom:36px}
+.hero{
+  background:linear-gradient(145deg,#07111f 0%,#111d31 58%,#172b45 100%);
+  color:#fff;padding:24px 18px 22px;border-radius:0 0 30px 30px;
+  box-shadow:0 10px 28px rgba(16,24,40,.18)
+}
+.hero-top{display:flex;align-items:center;justify-content:space-between}
+.kicker{font-size:14px;color:#b9c5d6;font-weight:600}
+.title{font-size:30px;font-weight:800;letter-spacing:-.7px;margin-top:2px}
+.alarm-btn{
+  width:46px;height:46px;border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.08);color:#fff;border-radius:15px;font-size:21px
+}
+.warning{margin-top:5px;font-size:14px;font-weight:700;color:#ffd76a}
+.count-card{
+  margin-top:20px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.11);
+  border-radius:22px;padding:18px;text-align:center
+}
+.count-label{font-size:13px;color:#b9c5d6}
+.count{font-size:82px;line-height:1;font-weight:900;letter-spacing:-4px;margin:6px 0}
+.count-caption{font-size:14px;font-weight:700}
+.date-note{font-size:11px;color:#9eabbc;margin-top:8px}
+.content{padding:20px 15px}
+.section-head{display:flex;align-items:end;justify-content:space-between;margin:2px 2px 13px}
+h2{font-size:22px;margin:0;font-weight:800}
+.sub{font-size:12px;color:#667085;margin-top:3px}
+.badge{background:#e8f1ff;color:#175cd3;padding:6px 10px;border-radius:99px;font-size:12px;font-weight:800}
+.subject{
+ background:#fff;border:1px solid #e7eaf0;border-radius:20px;margin:11px 0;
+ box-shadow:0 5px 18px rgba(16,24,40,.06);overflow:hidden
+}
+.subject-head{display:flex;align-items:center;justify-content:space-between;padding:15px}
+.subject-left{display:flex;align-items:center;gap:12px}
+.subject-icon{width:44px;height:44px;border-radius:14px;background:#f1f4f9;display:grid;place-items:center;font-size:21px}
+.subject-name{font-size:16px;font-weight:800}
+.subject-count{font-size:11px;color:#98a2b3;margin-top:2px}
+.plus{
+ width:40px;height:40px;border:0;border-radius:13px;background:#101828;color:white;
+ font-size:27px;line-height:1;font-weight:400
+}
+.tasks{padding:0 12px 12px}
+.empty{background:#f8fafc;border-radius:14px;padding:11px;color:#98a2b3;font-size:12px;text-align:center}
+.task{
+ display:flex;gap:10px;align-items:flex-start;border:1px solid #eaecf0;
+ border-radius:15px;padding:11px;margin-top:8px;background:#fff
+}
+.task-main{flex:1;min-width:0}.task-name{font-size:13px;font-weight:700;line-height:1.5;word-break:break-word}
+.task-meta{font-size:10px;color:#667085;margin-top:4px}
+.check{width:23px;height:23px;margin-top:2px;accent-color:#111827}
+.info{
+ margin-top:18px;background:#fff;border:1px solid #e7eaf0;border-radius:18px;
+ padding:14px;display:flex;gap:11px;box-shadow:0 4px 14px rgba(16,24,40,.04)
+}
+.info-icon{font-size:21px}.info strong{font-size:13px}.info p{font-size:11px;color:#667085;line-height:1.55;margin:3px 0 0}
+.modal{position:fixed;inset:0;background:rgba(7,17,31,.62);display:flex;align-items:flex-end;z-index:20}
+.modal.hide{display:none}
+.sheet{
+ width:min(720px,100%);margin:auto;background:#fff;border-radius:25px 25px 0 0;
+ padding:18px 16px 26px;box-shadow:0 -12px 35px rgba(0,0,0,.18)
+}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.sheet h3{font-size:18px;margin:0;font-weight:800}
+.close{width:36px;height:36px;border:0;border-radius:11px;background:#f2f4f7;font-size:22px}
+label{display:block;font-size:12px;font-weight:800;margin:12px 0 6px}
+textarea,input{width:100%;border:1px solid #d0d5dd;border-radius:12px;padding:11px;background:#fff;outline:none}
+textarea:focus,input:focus{border-color:#475467;box-shadow:0 0 0 3px rgba(71,84,103,.10)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.save{width:100%;border:0;border-radius:13px;background:#101828;color:#fff;padding:13px;margin-top:15px;font-weight:800}
+.toast{
+ position:fixed;left:50%;bottom:20px;transform:translate(-50%,20px);opacity:0;
+ background:#101828;color:#fff;padding:11px 15px;border-radius:13px;font-size:12px;
+ transition:.2s;z-index:50;max-width:90%;text-align:center
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(min-width:700px){body{padding-bottom:30px}.hero{border-radius:0 0 30px 30px}.modal{align-items:center;padding:20px}.sheet{max-width:560px;border-radius:25px}.count{font-size:94px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="hero">
+  <div class="hero-top">
+    <div><div class="kicker">Study Planner</div><div class="title">2027 A/L</div></div>
+    <button id="notifyBtn" class="alarm-btn">🔔</button>
+  </div>
+  <div class="warning">විභගෙ ලගයි ⚠️📵</div>
+  <div class="count-card">
+    <div class="count-label">ඉතිරි දවස්</div>
+    <div id="count" class="count">--</div>
+    <div class="count-caption">2027 A/L</div>
+    <div class="date-note">විභාග දිනය • 2027 අගෝස්තු 30</div>
+  </div>
+</header>
+
+<main class="content">
+  <div class="section-head">
+    <div><h2>මග ඇරුනු වැඩ</h2><div class="sub">අතපසු වූ වැඩ එකතු කරලා මතක් කරගන්න</div></div>
+    <span id="badge" class="badge">0 වැඩ</span>
+  </div>
+  <div id="subjects"></div>
+
+  <div class="info">
+    <div class="info-icon">🔔</div>
+    <div><strong>නියමිත වේලාවේ මතක් කිරීම</strong>
+      <p>වැඩක් එකතු කරන විට දිනය සහ වේලාව දෙන්න. Notification permission ලබා දුන් පසු “ඉක්මන් කරන්න” ලෙස මතක් කිරීමට උත්සාහ කරයි.</p>
+    </div>
+  </div>
+</main>
+</div>
+
+<div id="modal" class="modal hide">
+ <div class="sheet">
+  <div class="sheet-head"><h3 id="modalTitle">වැඩක් එකතු කරන්න</h3><button id="close" class="close">×</button></div>
+  <label>වැඩේ විස්තරය</label>
+  <textarea id="text" rows="3" placeholder="උදා: ICT Chapter 03 video එක බලන්න..."></textarea>
+  <div class="two">
+   <div><label>දිනය</label><input id="date" type="date"></div>
+   <div><label>වේලාව</label><input id="time" type="time"></div>
+  </div>
+  <button id="save" class="save">වැඩේ සුරකින්න ✓</button>
+ </div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const SUBJECTS=[
+ {name:"සිංහල",icon:"📚"},
+ {name:"ICT",icon:"💻"},
+ {name:"දේශපාලන විද්‍යාව",icon:"🏛️"}
+];
+const KEY="rukshan_al_tasks_v2";
+let tasks=JSON.parse(localStorage.getItem(KEY)||"[]"), chosen="";
+const $=id=>document.getElementById(id);
+function persist(){localStorage.setItem(KEY,JSON.stringify(tasks))}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function toast(s){$("toast").textContent=s;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2600)}
+function fmt(d){return d.toLocaleDateString("si-LK",{year:"numeric",month:"short",day:"numeric"})}
+function ft(d){return d.toLocaleTimeString("si-LK",{hour:"2-digit",minute:"2-digit"})}
+
+function render(){
+ $("subjects").innerHTML="";
+ let active=0;
+ SUBJECTS.forEach(s=>{
+  const arr=tasks.filter(t=>t.subject===s.name).sort((a,b)=>new Date(a.when)-new Date(b.when));
+  active+=arr.length;
+  const box=document.createElement("section");box.className="subject";
+  box.innerHTML=`<div class="subject-head">
+    <div class="subject-left"><div class="subject-icon">${s.icon}</div><div>
+      <div class="subject-name">${s.name}</div><div class="subject-count">${arr.length} වැඩ</div>
+    </div></div>
+    <button class="plus">+</button></div><div class="tasks"></div>`;
+  box.querySelector(".plus").onclick=()=>openAdd(s.name);
+  const area=box.querySelector(".tasks");
+  if(!arr.length) area.innerHTML='<div class="empty">තවම වැඩක් එකතු කරලා නැහැ</div>';
+  arr.forEach(t=>{
+   const d=new Date(t.when), row=document.createElement("div");row.className="task";
+   row.innerHTML=`<input class="check" type="checkbox"><div class="task-main">
+     <div class="task-name">${esc(t.text)}</div>
+     <div class="task-meta">📅 ${fmt(d)} &nbsp; • &nbsp; 🕐 ${ft(d)}</div></div>`;
+   row.querySelector(".check").onchange=()=>{
+     tasks=tasks.filter(x=>x.id!==t.id);persist();render();toast("වැඩේ සම්පූර්ණ කළා ✓");
+   };
+   area.appendChild(row);
+  });
+  $("subjects").appendChild(box);
+ });
+ $("badge").textContent=active+" වැඩ";
+}
+function openAdd(s){
+ chosen=s;$("modalTitle").textContent=s+" — වැඩක් එකතු කරන්න";
+ const d=new Date(Date.now()+5*60000);
+ $("date").value=d.toISOString().slice(0,10);
+ $("time").value=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+ $("text").value="";$("modal").classList.remove("hide");setTimeout(()=>$("text").focus(),80)
+}
+$("close").onclick=()=>$("modal").classList.add("hide");
+$("modal").onclick=e=>{if(e.target===$("modal"))$("modal").classList.add("hide")};
+$("save").onclick=()=>{
+ const text=$("text").value.trim(), dt=new Date($("date").value+"T"+$("time").value);
+ if(!text||isNaN(dt.getTime()))return toast("විස්තර, දිනය සහ වේලාව දෙන්න.");
+ if(dt<=new Date())return toast("ඉදිරි දිනයක් සහ වේලාවක් තෝරන්න.");
+ tasks.push({id:Date.now(),subject:chosen,text,when:dt.toISOString(),notified:false});
+ persist();render();$("modal").classList.add("hide");toast("වැඩේ සුරැකිණි ✓");
+};
+
+const exam=new Date("2027-08-30T00:00:00+05:30");
+function countdown(){
+ const n=Date.now(),days=Math.max(0,Math.ceil((exam.getTime()-n)/86400000));
+ $("count").textContent=days;
+}
+countdown();setInterval(countdown,60000);
+
+$("notifyBtn").onclick=async()=>{
+ if(!("Notification"in window))return toast("මේ browser එක Notification support නොකරයි.");
+ const p=await Notification.requestPermission();
+ toast(p==="granted"?"Notification අවසරය ලැබුණා ✓":"Notification අවසරය ලබා දී නැහැ");
+};
+
+function due(){
+ const now=Date.now(),ready=tasks.filter(t=>!t.notified&&new Date(t.when).getTime()<=now);
+ ready.forEach(t=>{
+  t.notified=true;
+  const body=t.subject+" — "+t.text;
+  if("Notification"in window&&Notification.permission==="granted"){
+   try{new Notification("ඉක්මන් කරන්න",{body})}catch(e){toast("🔔 ඉක්මන් කරන්න — "+body)}
+  }else toast("🔔 ඉක්මන් කරන්න — "+body);
+ });
+ if(ready.length)persist();
+}
+setInterval(due,15000);render();due();
+</script>
+</body>
+</html>
