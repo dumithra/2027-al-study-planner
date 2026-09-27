@@ -199,7 +199,7 @@ $("save").onclick=()=>{
  persist();render();$("modal").classList.add("hide");toast("වැඩේ සුරැකිණි ✓");
 };
 
-const exam=new Date("2027-08-30T00:00:00+05:30");
+const exam=new Date("2027-04-30T00:00:00+05:30");
 function countdown(){
  const n=Date.now(),days=Math.max(0,Math.ceil((exam.getTime()-n)/86400000));
  $("count").textContent=days;
